@@ -33,7 +33,7 @@ compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 ```
 
 ## Usage
-See usage and examples in the [API usage](https://github.com/SnowSense/snowsense-java-sdk/blob/master/API_Docs.md) and [test cases](https://github.com/SnowSense/snowsense-java-sdk/blob/master/src/test/java/com/snowsense/face/sdk/FaceSDKTest.java) 
+See usage and examples in the [API usage](./API_Docs.md) and [test cases](./src/test/java/com/snowsense/face/sdk/FaceSDKTest.java) 
 
 ## License
 ```
