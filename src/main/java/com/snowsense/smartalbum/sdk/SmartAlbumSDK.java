@@ -9,12 +9,12 @@ package com.snowsense.smartalbum.sdk;
 
 import com.snowsense.RetrofitResponseHandler;
 import com.snowsense.SnowSenseSdkException;
-import com.snowsense.smartalbum.sdk.rest.SmartAlbumService;
 import com.snowsense.smartalbum.sdk.rest.model.ImageClassifyRequest;
+import com.snowsense.smartalbum.sdk.rest.SmartAlbumService;
 import com.snowsense.common.BaseSDK;
 import com.snowsense.common.ResultCallback;
+import com.snowsense.utils.UrlUtils;
 import okhttp3.MediaType;
-import okhttp3.ResponseBody;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +65,9 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IllegalArgumentException if a param does not comply
      */
     public ClassifySceneResult examineImageUrls(String... imageUrls) throws SnowSenseSdkException {
+        if(imageUrls!=null&&imageUrls.length>0&& UrlUtils.isHeicImg(imageUrls[0])){
+            return RetrofitResponseHandler.getResponse(getService().classifyScene(ImageClassifyRequest.heicImageFromUrls(Arrays.asList(imageUrls))));
+        }
         return RetrofitResponseHandler.getResponse(getService().classifyScene(
                 ImageClassifyRequest.fromUrls(Arrays.asList(imageUrls))));
     }
@@ -78,7 +81,10 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public void examineImageUrls(List<String> imageUrls, ResultCallback<ClassifySceneResult> callback) throws IOException {
+    public void examineImageUrlsAsync(List<String> imageUrls, ResultCallback<ClassifySceneResult> callback) throws IOException {
+        if(imageUrls!=null&&imageUrls.size()>0&&UrlUtils.isHeicImg(imageUrls.get(0))){
+            RetrofitResponseHandler.getResponse(getService().classifyScene(ImageClassifyRequest.heicImageFromUrls(imageUrls)), callback);
+        }
         RetrofitResponseHandler.getResponse(getService().classifyScene(ImageClassifyRequest.fromUrls(imageUrls)), callback);
     }
 
@@ -118,8 +124,12 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public ResponseBody convertHeicUrl(String heicUrl) throws SnowSenseSdkException {
-        return RetrofitResponseHandler.getResponse(getService().convertHeic(heicUrl));
+    public JPGResponse convertHeicUrl(String heicUrl) throws SnowSenseSdkException {
+        if(UrlUtils.isHeicImg(heicUrl)) {
+            return RetrofitResponseHandler.getResponse(getService().convertHeic(heicUrl));
+        }else{
+            return null;
+        }
     }
 
 
@@ -132,10 +142,29 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public void convertHeicUrl(String heicUrl, ResultCallback<ClassifySceneResult> callback) throws SnowSenseSdkException {
+    public void convertHeicUrl(String heicUrl, ResultCallback<JPGResponse> callback) throws SnowSenseSdkException {
         RetrofitResponseHandler.getResponse(getService().convertHeic(heicUrl), callback);
     }
 
+    /**
+     *
+     * @param imageUrls
+     * @return
+     * @throws SnowSenseSdkException
+     */
+    public ExifResult getExifInfo(String ... imageUrls) throws SnowSenseSdkException {
+        return RetrofitResponseHandler.getResponse(getService().getExifInfo(ImageClassifyRequest.fromUrls(Arrays.asList(imageUrls))));
+    }
+
+    /**
+     *
+     * @param imageUrls
+     * @param callback
+     * @throws SnowSenseSdkException
+     */
+    public void getExifInfoAsyn(List<String> imageUrls,ResultCallback<ExifResult> callback) throws SnowSenseSdkException {
+        RetrofitResponseHandler.getResponse(getService().getExifInfo(ImageClassifyRequest.fromUrls(imageUrls)), callback);
+    }
 
     /**
      *
@@ -159,7 +188,7 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public void getExifInfo(List<File> files, ResultCallback<ClassifySceneResult> callback) throws SnowSenseSdkException {
+    public void getExifInfoAsync(List<File> files, ResultCallback<ExifResult> callback) throws SnowSenseSdkException {
         RetrofitResponseHandler.getResponse(getService().getExifInfo(ImageClassifyRequest.fromFiles(files)), callback);
     }
 
@@ -171,7 +200,7 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public String resetCache() throws SnowSenseSdkException {
+    public ResetCacheString resetCache() throws SnowSenseSdkException {
         return RetrofitResponseHandler.getResponse(getService().resetCache());
     }
 
@@ -184,7 +213,7 @@ public class SmartAlbumSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public void resetCache(ResultCallback<ClassifySceneResult> callback) throws SnowSenseSdkException {
+    public void resetCache(ResultCallback<ResetCacheString> callback) throws SnowSenseSdkException {
         RetrofitResponseHandler.getResponse(getService().resetCache(), callback);
     }
 

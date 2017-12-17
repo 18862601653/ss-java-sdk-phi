@@ -17,6 +17,7 @@ public class TestUtils {
         if (!resourceName.startsWith("/")) {
             resourceName = "/" + resourceName;
         }
+        //System.out.println(new TestUtils().getClass().getResource("/"));
         URL url = new TestUtils().getClass().getResource(resourceName);
         return new File(url.getPath());
     }

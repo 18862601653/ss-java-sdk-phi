@@ -1,16 +1,14 @@
 package com.snowsense.smartalbum.sdk.rest.model;
 
 import com.google.gson.annotations.Expose;
-import com.snowsense.Base64Provider;
+import com.snowsense.Constants;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 
 public class ImageClassifyRequest {
-    private List<ImageEntry> images = new ArrayList<>();
+    private List<BaseEntry> images = new ArrayList<>();
+    private String format;
 
     public static ImageClassifyRequest fromUrls(List<String> imageUrls) {
         ImageClassifyRequest request = new ImageClassifyRequest();
@@ -19,6 +17,18 @@ public class ImageClassifyRequest {
                 request.images.add(new ImageEntry(s));
             }
         }
+
+        return request;
+    }
+
+    public static ImageClassifyRequest heicImageFromUrls(List<String> imageUrls) {
+        ImageClassifyRequest request = new ImageClassifyRequest();
+        if (imageUrls != null) {
+            for (String s : imageUrls) {
+                request.images.add(new HeicImageEntry(s));
+            }
+        }
+        request.format= Constants.HEIC_IMG_FORMAT;
 
         return request;
     }
@@ -50,5 +60,20 @@ public class ImageClassifyRequest {
         public ImageEntry(File file) {
             super(file);
         }
+    }
+
+    private static class HeicImageEntry extends BaseEntry{
+        @Expose(serialize = false, deserialize = false)
+        private static final String FILE_PREFIX = "data:image/heic;base64,";
+
+        @Override
+        protected String getPrefix() {
+            return FILE_PREFIX;
+        }
+
+        public HeicImageEntry(String url) {
+            super(url);
+        }
+
     }
 }

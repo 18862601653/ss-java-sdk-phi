@@ -13,6 +13,7 @@ import com.snowsense.antiporn.sdk.rest.AntiPornService;
 import com.snowsense.antiporn.sdk.rest.model.ImageClassifyRequest;
 import com.snowsense.common.BaseSDK;
 import com.snowsense.common.ResultCallback;
+import com.snowsense.utils.UrlUtils;
 import okhttp3.MediaType;
 
 import java.io.File;
@@ -56,6 +57,8 @@ public class AntiPornSDK extends BaseSDK {
         return sInstance;
     }
 
+
+
     /**
      * Examine (classify) whether the images contain porn information.
      * @param imageUrls
@@ -64,6 +67,10 @@ public class AntiPornSDK extends BaseSDK {
      * @throws IllegalArgumentException if a param does not comply
      */
     public ClassifyResult examineImageUrls(String... imageUrls) throws SnowSenseSdkException {
+        if(imageUrls!=null&&imageUrls.length>0&&UrlUtils.isHeicImg(imageUrls[0])){
+            return RetrofitResponseHandler.getResponse(getService().aduitImage(
+                    ImageClassifyRequest.heicImageFromUrls(Arrays.asList(imageUrls))));
+        }
         return RetrofitResponseHandler.getResponse(getService().aduitImage(
                 ImageClassifyRequest.fromUrls(Arrays.asList(imageUrls))));
     }
@@ -77,6 +84,9 @@ public class AntiPornSDK extends BaseSDK {
      * @throws IllegalArgumentException if a param does not comply
      */
     public void examineImageUrls(List<String> imageUrls, ResultCallback<ClassifyResult> callback) throws IOException {
+        if(imageUrls!=null&&imageUrls.size()>0&&UrlUtils.isHeicImg(imageUrls.get(0))){
+            RetrofitResponseHandler.getResponse(getService().aduitImage(ImageClassifyRequest.heicImageFromUrls(imageUrls)), callback);
+        }
         RetrofitResponseHandler.getResponse(getService().aduitImage(ImageClassifyRequest.fromUrls(imageUrls)), callback);
     }
 
@@ -101,7 +111,7 @@ public class AntiPornSDK extends BaseSDK {
      * @throws IOException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public void examineImageFiles(List<File> files, ResultCallback<ClassifyResult> callback) throws SnowSenseSdkException {
+    public void examineImageFilesAsync(List<File> files, ResultCallback<ClassifyResult> callback) throws SnowSenseSdkException {
         RetrofitResponseHandler.getResponse(getService().aduitImage(ImageClassifyRequest.fromFiles(files)), callback);
     }
 
@@ -115,8 +125,8 @@ public class AntiPornSDK extends BaseSDK {
      * @throws SnowSenseSdkException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public ClassifyResult examineVideoFile(File file, String format) throws SnowSenseSdkException {
-        return RetrofitResponseHandler.getResponse(getService().aduitVideo(convertFileToBody(file), format));
+    public VideoClassifyResult examineVideoFile(File file, String format) throws SnowSenseSdkException {
+        return RetrofitResponseHandler.getResponse(getService().aduitVideo(convertVideoFileToBody(file),format));
     }
 
     /**
@@ -128,8 +138,51 @@ public class AntiPornSDK extends BaseSDK {
      * @throws SnowSenseSdkException
      * @throws IllegalArgumentException if a param does not comply
      */
-    public void examineVideoFile(File file, String format, ResultCallback<ClassifyResult> callback) throws SnowSenseSdkException {
-        RetrofitResponseHandler.getResponse(getService().aduitVideo(convertFileToBody(file), format), callback);
+    public void examineVideoFile(File file, String format, ResultCallback<VideoClassifyResult> callback) throws SnowSenseSdkException {
+        RetrofitResponseHandler.getResponse(getService().aduitVideo(convertVideoFileToBody(file), format), callback);
+    }
+
+    /**
+     *
+     * @param uri
+     * @param format
+     * @return
+     * @throws Exception
+     */
+    public VideoClassifyResult examineVideoUrls(String uri, String format) throws Exception{
+        return RetrofitResponseHandler.getResponse(getService().aduitVideo(convertVideoFileToBody(UrlUtils.urlToFile(uri)),format));
+    }
+
+    /**
+     * asynchronously
+     *
+     * @param uri
+     * @param format
+     * @param callback
+     * @throws Exception
+     */
+    public void examineVideoUrls(String uri, String format, ResultCallback<VideoClassifyResult> callback) throws Exception {
+        RetrofitResponseHandler.getResponse(getService().aduitVideo(convertVideoFileToBody(UrlUtils.urlToFile(uri)), format), callback);
+    }
+
+    /**
+     * resetcache
+     *
+     * @return
+     * @throws SnowSenseSdkException
+     */
+    public ResetCacheString examineResetCache() throws SnowSenseSdkException {
+        return RetrofitResponseHandler.getResponse(getService().resetCache());
+    }
+
+    /**
+     * resetcache asynchronously
+     *
+     * @return
+     * @throws SnowSenseSdkException
+     */
+    public void examineResetCache(ResultCallback<ResetCacheString> callback) throws SnowSenseSdkException {
+        RetrofitResponseHandler.getResponse(getService().resetCache(),callback);
     }
 
     private AntiPornService getService() {
@@ -140,7 +193,5 @@ public class AntiPornSDK extends BaseSDK {
         return antiPornService;
     }
 
-    private void ensureUrlIsValid(String paramName, String value) {
-        // ensure URL has valid URL format
-    }
+
 }

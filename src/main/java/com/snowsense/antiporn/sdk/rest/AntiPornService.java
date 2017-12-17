@@ -7,20 +7,24 @@
 
 
 import com.snowsense.antiporn.sdk.ClassifyResult;
+import com.snowsense.antiporn.sdk.ResetCacheString;
+import com.snowsense.antiporn.sdk.VideoClassifyResult;
 import com.snowsense.antiporn.sdk.rest.model.ImageClassifyRequest;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import java.awt.*;
+
 public interface AntiPornService {
 
-    @POST("imgclassify/antiporn")
+    @POST("dbg/imgclassify/antiporn")
     Call<ClassifyResult> aduitImage(@Body ImageClassifyRequest request);
 
     @POST("videoclassify/antiporn")
     @Multipart
-    Call<ClassifyResult> aduitVideo(@Part("video") MultipartBody.Part file, @Part("format") String format);
+    Call<VideoClassifyResult> aduitVideo(@Part MultipartBody.Part file, @Query("format") String format);
 
     @POST("resetcache")
-    Call<String> resetCache();
+    Call<ResetCacheString> resetCache();
 }

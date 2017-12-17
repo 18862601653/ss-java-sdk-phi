@@ -7,11 +7,36 @@
  */
 package com.snowsense.smartalbum.sdk;
 
-import com.google.gson.annotations.SerializedName;
-import java.util.List;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ExifResult {
 
+	private ArrayList<Exif> exif = new ArrayList<Exif>();
+	private String error;
+	public String getError(){return error;}
+	public ArrayList<Exif> getExif(){
+		return exif;
+	}
+
+	@Override
+	public String toString(){
+		final StringBuilder sb = new StringBuilder("ExifResult{");
+		if("".equals(error)) {
+			sb.append("exif=").append(exif.get(0));
+			for (int i = 1; i < exif.size(); i++) {
+				sb.append(",exif=").append(exif.get(i));
+			}
+		}else{
+			sb.append("error=").append(error);
+		}
+		sb.append('}');
+		return sb.toString();
+	}
+}
+class Exif implements Serializable{
 	//	DateTime	string	拍摄日期和时间
 	//	GPSInfo	string	GPS原始信息
 	//	GPSLatitude	float	从GPS原始信息中转换成浮点数的经纬度坐标
@@ -22,52 +47,64 @@ public class ExifResult {
 	//	ResolutionUnit	int	清晰度
 	//	SceneCaptureType	int	TBA
 
-	private String datetime;
-	private float latitude;
-	private float longitude;
-	private String maker;
-	private String model;
-	private int orientation;
-	private int resolution;
+	private String DateTime;
+	private Map<String,Object> GPSInfo;
+	private float GPSLatitude;
+	private float GPSLongitude;
+	private String Make;
+	private String Model;
+	private int Orientation;
+	private int ResolutionUnit;
+	private int SceneCaptureType;
+
+	public Exif(){	}
 
 	public String getDatetime(){
-		return datetime;
+		return DateTime;
 	}
 
-	public float getLatitude(){
-		return latitude;
+	public Map<String,Object> getGPSInfo(){	return GPSInfo;	}
+
+	public float getGPSLatitude(){
+		return GPSLatitude;
 	}
 
-	public float getLongitude(){
-		return longitude;
+	public float getGPSLongitude(){
+		return GPSLongitude;
 	}
 
-	public String getMaker(){
-		return maker;
+	public String getMake(){
+		return Make;
 	}
 
 	public String getModel(){
-		return model;
+		return Model;
 	}
 
 	public int getOrientation(){
-		return orientation;
+		return Orientation;
 	}
 
-	public int getResolution(){
-		return resolution;
+	public int getResolutionUnit(){
+		return ResolutionUnit;
+	}
+
+	public int getSceneCaptureType(){
+		return SceneCaptureType;
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ExifResult{");
-		sb.append("datetime=").append(datetime);
-		sb.append(", latitude='").append(latitude).append('\'');
-		sb.append(", longitude=").append(longitude);
-		sb.append(", maker='").append(maker).append('\'');
-		sb.append(", model='").append(model).append('\'');
-		sb.append(", orientation=").append(orientation);
-		sb.append(", resolution=").append(resolution);
+		final StringBuilder sb = new StringBuilder("Exif{");
+		sb.append("DateTime=").append(DateTime);
+		sb.append(", GPSInfo='").append(GPSInfo).append('\'');
+		sb.append(", latitude='").append(GPSLatitude).append('\'');
+		sb.append(", longitude=").append(GPSLongitude);
+		sb.append(", maker='").append(Make).append('\'');
+		sb.append(", model='").append(Model).append('\'');
+		sb.append(", orientation=").append(Orientation);
+		sb.append(", resolution=").append(ResolutionUnit);
+		sb.append(",SceneCaptureType=").append(SceneCaptureType);
 		sb.append('}');
 		return sb.toString();
 	}

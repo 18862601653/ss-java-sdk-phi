@@ -15,14 +15,24 @@ public class ClassifySceneResult {
 
 	private List<String> results;
 
+	private String error;
+
 	public List<String> ClassifySceneResult(){
 		return results;
+	}
+
+	public String getError(){
+		return error;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("ClassifySceneResult{");
-		sb.append("results=").append(results);
+		if("".equals(error)) {
+			sb.append("results=").append(results);
+		}else{
+			sb.append("error=").append(error);
+		}
 		sb.append('}');
 		return sb.toString();
 	}
